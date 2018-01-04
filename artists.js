@@ -50,13 +50,13 @@ artistsRouter.post('/', validateArtist,  (req, res, next) => {
     db.run(`INSERT INTO Artist (name, date_of_birth, biography, is_currently_employed) VALUES ($name, $date_of_birth, $biography, $is_currently_employed)`, 
     { $name: req.body.artist.name, $date_of_birth: req.body.artist.dateOfBirth, $biography: req.body.artist.biography, $is_currently_employed: 1}, function (error) {
         if (error) {
-            console.log(error);
+            //console.log(error);
             return res.sendStatus(500);
         }   
 
         db.get(`SELECT * FROM Artist WHERE id = ${this.lastID}`, (err, row) => {
       if (!row) {
-          console.log(err);
+          //console.log(err);
         return res.sendStatus(500);
       }
       res.status(201).send({artist: row});
@@ -67,6 +67,30 @@ artistsRouter.post('/', validateArtist,  (req, res, next) => {
     })
 
 })
+
+artistsRouter.put('/:id', validateArtist, (req, res, next) => {
+
+    const artistToUpdate = req.body.artist;
+    //console.log(artistToUpdate);
+    //console.log("this is params " + req.params.id);
+    db.run(`UPDATE Artist SET name=$name, date_of_birth=$date_of_birth, biography=$biography, is_currently_employed=$is_currently_employed where id=${req.params.id}`,
+    {$name:req.body.artist.name, $date_of_birth: req.body.artist.dateOfBirth, $biography:req.body.artist.biography, $is_currently_employed:1}), function (error, row) {
+        console.log(row);
+        if (error) {
+            console.log('this is error ' + error);
+            res.sendStatus(500);
+        }
+
+    }
+        db.get(`SELECT * from Artist where id = $id`, {$id: req.params.id}, (error, row) => {
+            if(!row) {
+                return res.sendStatus(500);
+            }
+            //console.log(row);
+            res.status(200).send({artist: row});
+        })
+
+    });
 
 
 
