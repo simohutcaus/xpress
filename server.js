@@ -11,16 +11,19 @@ app.use(express.static('public'));
 app.use(morgan('dev'));
 app.use(bodyParser.json());
 
-app.get('/api/artists', (req, res, next) => {
-    db.all('select * from Artist where is_currently_employed = 1', (err, rows) => {
-        if (err) {
-            console.log(err);
-            res.sendStatus(500);
-        } else {
-            res.send({artists: rows});
-        }
-    });
-});
+const apiRouter = require('./api');
+app.use('/api', apiRouter);
+
+// app.get('/api/artists', (req, res, next) => {
+//     db.all('select * from Artist where is_currently_employed = 1', (err, rows) => {
+//         if (err) {
+//             console.log(err);
+//             res.sendStatus(500);
+//         } else {
+//             res.send({artists: rows});
+//         }
+//     });
+// });
 
 app.listen(PORT, () => {
     console.log(`Server is listening on port ${PORT}`);
