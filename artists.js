@@ -44,7 +44,27 @@ const validateArtist = (req, res, next) => {
 
 
 artistsRouter.post('/', validateArtist,  (req, res, next) => {
-    console.log(req.body.artist);
+    const artistToCreate = req.body.artist;    
+    console.log(artistToCreate);
+    //console.log(req.body.artist);
+    db.run(`INSERT INTO Artist (name, date_of_birth, biography, is_currently_employed) VALUES ($name, $date_of_birth, $biography, $is_currently_employed)`, 
+    { $name: req.body.artist.name, $date_of_birth: req.body.artist.dateOfBirth, $biography: req.body.artist.biography, $is_currently_employed: 1}, function (error) {
+        if (error) {
+            console.log(error);
+            return res.sendStatus(500);
+        }   
+
+        db.get(`SELECT * FROM Artist WHERE id = ${this.lastID}`, (err, row) => {
+      if (!row) {
+          console.log(err);
+        return res.sendStatus(500);
+      }
+      res.status(201).send({artist: row});
+    });
+
+
+
+    })
 
 })
 
