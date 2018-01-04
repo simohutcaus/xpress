@@ -34,6 +34,20 @@ artistsRouter.get('/:id', (req, res, next) => {
     })
 })
 
+const validateArtist = (req, res, next) => {
+  const artistToCreate = req.body.artist;
+  if (!artistToCreate.name || !artistToCreate.dateOfBirth || !artistToCreate.biography) {
+    return res.sendStatus(400);
+  }
+  next();
+}
+
+
+artistsRouter.post('/', validateArtist,  (req, res, next) => {
+    console.log(req.body.artist);
+
+})
+
 
 
 
