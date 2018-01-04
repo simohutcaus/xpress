@@ -92,7 +92,27 @@ artistsRouter.put('/:id', validateArtist, (req, res, next) => {
 
     });
 
+artistsRouter.delete('/:id', (req, res, next) => {
 
+ const artistToDelete = req.params.id;
+    //console.log(artistToUpdate);
+    //console.log("this is params " + req.params.id);
+    db.run(`UPDATE Artist SET is_currently_employed = 0 where id=${req.params.id}`), function (error, row) {
+        console.log(row);
+        if (error) {
+            console.log('this is error ' + error);
+            res.sendStatus(500);
+        }
 
+    }
+        db.get(`SELECT * from Artist where id = $id`, {$id: req.params.id}, (error, row) => {
+            if(!row) {
+                return res.sendStatus(500);
+            }
+            //console.log(row);
+            res.status(200).send({artist: row});
+        })
+
+    });
 
 module.exports = artistsRouter;
